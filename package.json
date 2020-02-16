@@ -9,7 +9,7 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
-    "test": "tsdx test",
+    "test": "tsdx test  --watch",
     "lint": "tsdx lint",
     "prepare": "tsdx build"
   },
@@ -30,9 +30,13 @@
   "module": "dist/markov.esm.js",
   "devDependencies": {
     "@types/jest": "^25.1.2",
+    "@types/kuromoji": "^0.1.0",
     "husky": "^4.2.3",
     "tsdx": "^0.12.3",
     "tslib": "^1.10.0",
     "typescript": "^3.7.5"
+  },
+  "dependencies": {
+    "kuromoji": "^0.1.2"
   }
 }
