@@ -54,15 +54,11 @@ export class MarkovChain {
     const ret = [];
     for (var i = 0; i < sentence; i++) {
       const top = dic['@'];
-      if (!top) continue;
       let w1 = this.choiceWord(top);
       let w2 = this.choiceWord(top[w1]);
       ret.push(w1);
       ret.push(w2);
       for (;;) {
-        if (!dic[w1]) {
-          break;
-        }
         let w3 = this.choiceWord(dic[w1][w2]);
         ret.push(w3);
         if (w3 === '。') break;
