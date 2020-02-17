@@ -1,10 +1,10 @@
-import tokenizer from '../src/util/tokenizer';
+import { tokenizer } from '../src';
 
-describe('blah', () => {
+describe('形態素解析', () => {
   it('works', async () => {
-    const form = (await tokenizer())
+    const res = (await tokenizer)
       .tokenize('すもももももももものうち')
       .map(t => t.surface_form);
-    expect(form).toEqual(['すもも', 'も', 'もも', 'も', 'もも', 'の', 'うち']);
+    expect(res).toEqual(['すもも', 'も', 'もも', 'も', 'もも', 'の', 'うち']);
   });
 });

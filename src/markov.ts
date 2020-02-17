@@ -1,10 +1,12 @@
 import kuromoji from 'kuromoji';
-import tokenizer from '../src/util/tokenizer';
+import { tokenizer } from './tokenizer';
+
+type dictionary = any;
 
 export class MarkovChain {
   text: string;
   output: string;
-  dictionary: object;
+  dictionary: dictionary;
 
   constructor(text: string) {
     this.text = text;
@@ -13,9 +15,9 @@ export class MarkovChain {
   }
 
   async parse(sentence: number) {
-    const items = (await tokenizer()).tokenize(this.text);
+    const items = (await tokenizer).tokenize(this.text);
     this.dictionary = this.makeDic(items);
-    this.output = this.makeSentence(this.dictionary, sentence);
+    this.output = this.makeSentence(sentence);
     return this.output;
   }
 
@@ -47,10 +49,11 @@ export class MarkovChain {
     return dic;
   }
 
-  private makeSentence(dic: any, sentence: number) {
-    let ret = [];
+  private makeSentence(sentence: number) {
+    const dic = this.dictionary;
+    const ret = [];
     for (var i = 0; i < sentence; i++) {
-      let top = dic['@'];
+      const top = dic['@'];
       if (!top) continue;
       let w1 = this.choiceWord(top);
       let w2 = this.choiceWord(top[w1]);
@@ -70,12 +73,12 @@ export class MarkovChain {
     return ret.join('');
   }
 
-  private choiceWord(obj: any) {
+  private choiceWord(obj: object) {
     var ks = this.objKeys(obj);
     var i = this.rnd(ks.length);
     return ks[i];
   }
-  private objKeys(obj: any) {
+  private objKeys(obj: object) {
     var r = [];
     for (var i in obj) {
       r.push(i);

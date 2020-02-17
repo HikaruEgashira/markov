@@ -1,8 +1,4 @@
-export { MarkovChain } from './markov';
+import { MarkovChain } from './markov';
+import { tokenizer } from './tokenizer';
 
-export const sum = (a: number, b: number) => {
-  if ('development' === process.env.NODE_ENV) {
-    console.log('boop');
-  }
-  return a + b;
-};
+export { MarkovChain, tokenizer };
