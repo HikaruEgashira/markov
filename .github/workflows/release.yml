@@ -17,16 +17,15 @@ jobs:
         with:
           node-version: 10.x
           registry-url: 'https://registry.npmjs.org'
-      - name: install can-npm-publish and dependencies
+      - name: install dependencies
         run: |
-          yarn add can-npm-publish
-          yarn can-npm-publish
+          yarn
       - name: check version and add tag
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           REPO: ${{github.repository}}
           COMMIT: ${{github.sha}}
-        run: ./release.sh
+        run: ./.github/workflows/release.sh
       - name: test
         run: yarn test
       - name: release
