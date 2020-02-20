@@ -17,9 +17,16 @@ jobs:
         with:
           node-version: 10.x
           registry-url: 'https://registry.npmjs.org'
+      - name: Use cached node_modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: nodeModules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            nodeModules-
       - name: install dependencies
         run: |
-          yarn
+          yarn --frozen-lockfile
       - name: check version and add tag
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

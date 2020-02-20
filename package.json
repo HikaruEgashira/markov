@@ -25,7 +25,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "markov-ja",
+  "name": "markov-ja-ts",
   "author": "HikaruEgashira",
   "module": "dist/markov.esm.js",
   "devDependencies": {
