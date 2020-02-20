@@ -20,7 +20,7 @@ jobs:
       - name: install can-npm-publish and dependencies
         run: |
           yarn add can-npm-publish
-          yarn ci
+          yarn can-npm-publish
       - name: check version and add tag
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -29,8 +29,6 @@ jobs:
         run: ./release.sh
       - name: test
         run: yarn test
-      - name: build
-        run: yarn build
       - name: release
         run: yarn publish
         env:
