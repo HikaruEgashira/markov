@@ -25,7 +25,7 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           REPO: ${{github.repository}}
           COMMIT: ${{github.sha}}
-        run: ./.github/workflows/release.sh
+        run: ./release.sh
       - name: test
         run: yarn test
       - name: release
