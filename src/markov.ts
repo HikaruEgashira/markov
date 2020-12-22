@@ -1,5 +1,5 @@
 import kuromoji from 'kuromoji';
-import { tokenizer } from './tokenizer';
+import { tokenizer as kuromojiTokenizer } from './tokenizer';
 
 type Dictionary = {
   [w1: string]: {
@@ -11,12 +11,10 @@ type Dictionary = {
 
 export class MarkovChain {
   text: string;
-  output: string;
   dictionary: Dictionary;
 
   constructor(text: string) {
     this.text = text;
-    this.output = '';
     this.dictionary = {};
   }
 
@@ -25,10 +23,10 @@ export class MarkovChain {
    * @param sentence number of sentence
    */
   async generate(sentence: number) {
-    const items = (await tokenizer).tokenize(this.text);
+    const tokenizer = await kuromojiTokenizer();
+    const items = tokenizer.tokenize(this.text);
     this.dictionary = this.makeDic(items);
-    this.output = this.makeSentence(sentence);
-    return this.output;
+    return this.makeSentence(sentence);
   }
 
   private makeDic(items: kuromoji.IpadicFeatures[]): Dictionary {
@@ -62,6 +60,7 @@ export class MarkovChain {
   private makeSentence(sentence: number) {
     const dic = this.dictionary;
     const ret = [];
+
     for (let i = 0; i < sentence; i++) {
       const top = dic['@'];
       let w1 = this.choiceWord(top);
@@ -76,6 +75,7 @@ export class MarkovChain {
         w2 = w3;
       }
     }
+
     return ret.join('');
   }
 

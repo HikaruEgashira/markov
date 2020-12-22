@@ -10,8 +10,7 @@ describe('blah', () => {
 
     console.log(res);
 
-    expect(markov.output).toBe(res);
     expect(markov.dictionary['@']).toMatchObject({});
-    expect(res.split('').length).toBeGreaterThan(10);
+    expect(res.split('。').length - 1).toBe(10);
   });
 });
