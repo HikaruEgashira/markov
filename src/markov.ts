@@ -2,7 +2,11 @@ import kuromoji from 'kuromoji';
 import { tokenizer } from './tokenizer';
 
 type Dictionary = {
-  [index: string]: Dictionary | any;
+  [w1: string]: {
+    [w2: string]: {
+      [w3: string]: number;
+    };
+  };
 };
 
 export class MarkovChain {
@@ -20,7 +24,7 @@ export class MarkovChain {
    * 文章を生成する
    * @param sentence number of sentence
    */
-  async parse(sentence: number) {
+  async generate(sentence: number) {
     const items = (await tokenizer).tokenize(this.text);
     this.dictionary = this.makeDic(items);
     this.output = this.makeSentence(sentence);
@@ -38,9 +42,9 @@ export class MarkovChain {
         if (tmp.length < 3) return;
         if (tmp.length > 3) tmp.splice(0, 1);
 
-        let w1 = tmp[0];
-        let w2 = tmp[1];
-        let w3 = tmp[2];
+        const w1 = tmp[0];
+        const w2 = tmp[1];
+        const w3 = tmp[2];
         if (dic[w1] === undefined) dic[w1] = {};
         if (dic[w1][w2] === undefined) dic[w1][w2] = {};
         if (dic[w1][w2][w3] === undefined) dic[w1][w2][w3] = 0;
@@ -58,7 +62,7 @@ export class MarkovChain {
   private makeSentence(sentence: number) {
     const dic = this.dictionary;
     const ret = [];
-    for (var i = 0; i < sentence; i++) {
+    for (let i = 0; i < sentence; i++) {
       const top = dic['@'];
       let w1 = this.choiceWord(top);
       let w2 = this.choiceWord(top[w1]);
@@ -75,18 +79,18 @@ export class MarkovChain {
     return ret.join('');
   }
 
+  /**
+   * `obj`のランダムなkeyのvalueを返す
+   * @param obj 何かしらのオブジェクト
+   * @example ```
+   * const obj = { w1: "hello", w2: "world" }
+   * expect(choiceWord(obj)).toBe(w1 OR w2)
+   * ```
+   */
   private choiceWord(obj: object) {
-    var ks = this.objKeys(obj);
-    var i = this.rnd(ks.length);
-    return ks[i];
-  }
-
-  private objKeys(obj: object) {
-    var r = [];
-    for (var i in obj) {
-      r.push(i);
-    }
-    return r;
+    const keys = Object.keys(obj);
+    const index = this.rnd(keys.length);
+    return keys[index];
   }
 
   private rnd(num: number) {

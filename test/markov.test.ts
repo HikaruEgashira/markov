@@ -6,7 +6,7 @@ describe('blah', () => {
     const text = fs.readFileSync(__dirname + '/sample.txt', 'utf8');
     const markov = new MarkovChain(text);
     expect(markov.text).toBe(text);
-    const res = await markov.parse(10);
+    const res = await markov.generate(10);
 
     console.log(res);
 
