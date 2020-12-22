@@ -1,12 +1,14 @@
 import kuromoji from 'kuromoji';
 import { tokenizer } from './tokenizer';
 
-type dictionary = any;
+type Dictionary = {
+  [index: string]: Dictionary | any;
+};
 
 export class MarkovChain {
   text: string;
   output: string;
-  dictionary: dictionary;
+  dictionary: Dictionary;
 
   constructor(text: string) {
     this.text = text;
@@ -14,6 +16,10 @@ export class MarkovChain {
     this.dictionary = {};
   }
 
+  /**
+   * 文章を生成する
+   * @param sentence number of sentence
+   */
   async parse(sentence: number) {
     const items = (await tokenizer).tokenize(this.text);
     this.dictionary = this.makeDic(items);
@@ -21,9 +27,9 @@ export class MarkovChain {
     return this.output;
   }
 
-  private makeDic(items: kuromoji.IpadicFeatures[]) {
+  private makeDic(items: kuromoji.IpadicFeatures[]): Dictionary {
     let tmp = ['@'];
-    let dic: any = {};
+    let dic: Dictionary = {};
     items
       .map(item => item.surface_form.replace(/\s*/, ''))
       .forEach(word => {
@@ -74,6 +80,7 @@ export class MarkovChain {
     var i = this.rnd(ks.length);
     return ks[i];
   }
+
   private objKeys(obj: object) {
     var r = [];
     for (var i in obj) {
@@ -81,6 +88,7 @@ export class MarkovChain {
     }
     return r;
   }
+
   private rnd(num: number) {
     return Math.floor(Math.random() * num);
   }
