@@ -1,4 +1,5 @@
-import { MarkovChain } from './markov';
+import { MarkovChainJa } from './markovJa';
+import { MarkovChainEn } from './markovEn';
 import { tokenizer } from './tokenizer';
 
-export { MarkovChain, tokenizer };
+export { MarkovChainEn, MarkovChainJa, tokenizer };
