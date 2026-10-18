@@ -10,7 +10,7 @@ export class MarkovChainEn extends MarkovChainEntity {
   async tokenize() {
     const words = this.text
       .split('. ')
-      .flatMap(word => [...word.split(' '), '.']);
+      .reduce<string[]>((acc, word) => acc.concat(word.split(' '), '.'), []);
     return words;
   }
 }
