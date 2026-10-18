@@ -10,33 +10,40 @@ jobs:
   release:
     name: check version, add tag and release
     runs-on: [self-hosted, linux, arm64, hikae-flash]
+    outputs:
+      can_publish: ${{ steps.check.outputs.can_publish }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
       - name: setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: 10.x
+          node-version: 20.x
           registry-url: 'https://registry.npmjs.org'
-      - name: Use cached node_modules
-        uses: actions/cache@v1
-        with:
-          path: node_modules
-          key: nodeModules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            nodeModules-
+          cache: yarn
       - name: install dependencies
-        run: |
-          yarn --frozen-lockfile
+        run: yarn install --frozen-lockfile
+        env:
+          CI: true
       - name: check version and add tag
+        id: check
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           REPO: ${{github.repository}}
           COMMIT: ${{github.sha}}
-        run: curl https://raw.githubusercontent.com/HikaruEgashira/markov/master/.github/workflows/release.sh | bash
+        run: bash .github/workflows/release.sh
       - name: test
-        run: yarn test
+        if: steps.check.outputs.can_publish == 'true'
+        run: yarn test --ci --coverage --maxWorkers=2
+        env:
+          CI: true
+      - name: build
+        if: steps.check.outputs.can_publish == 'true'
+        run: yarn build
+        env:
+          CI: true
       - name: release
-        run: yarn publish
+        if: steps.check.outputs.can_publish == 'true'
+        run: yarn publish --non-interactive
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
