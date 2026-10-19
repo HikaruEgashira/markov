@@ -6,6 +6,16 @@ on:
       - master
     tags:
       - '!*'
+
+# The release job creates a git tag, which needs an explicitly writable token.
+permissions:
+  contents: write
+
+# Serialize releases so two pushes cannot race on the same version tag.
+concurrency:
+  group: automatic-release
+  cancel-in-progress: false
+
 jobs:
   release:
     name: check version, add tag and release
