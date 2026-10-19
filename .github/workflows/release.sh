@@ -23,14 +23,27 @@ fi
 TAG=$(node -p "require('./package.json').version")
 echo "add new tag to GitHub: ${TAG}"
 
-# Add tag to GitHub
-API_URL="https://api.github.com/repos/${REPO}/git/refs"
+# Add the tag only when it does not exist yet. The tag is created before the
+# package is published, so a previous failed run may already have tagged this
+# version; posting it again would return HTTP 422 and fail the whole job, which
+# is why an already-published version could keep failing the release.
+REFS_URL="https://api.github.com/repos/${REPO}/git/refs"
+REF_URL="https://api.github.com/repos/${REPO}/git/ref/tags/${TAG}"
+STATUS=$(curl -sS -o /dev/null -w '%{http_code}' \
+  -H "Authorization: token ${GITHUB_TOKEN}" "${REF_URL}")
 
-curl -sS -f -X POST "${API_URL}" \
-  -H "Authorization: token ${GITHUB_TOKEN}" \
-  -d @- << EOS
+if [ "${STATUS}" = "200" ]; then
+  echo "tag ${TAG} already exists; reusing it"
+elif [ "${STATUS}" = "404" ]; then
+  curl -sS -f -X POST "${REFS_URL}" \
+    -H "Authorization: token ${GITHUB_TOKEN}" \
+    -d @- << EOS
 {
   "ref": "refs/tags/${TAG}",
   "sha": "${COMMIT}"
 }
 EOS
+else
+  echo "unexpected response checking tag ${TAG}: HTTP ${STATUS}" >&2
+  exit 1
+fi
